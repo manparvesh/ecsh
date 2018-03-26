@@ -1,6 +1,13 @@
 # ecsh
 Elementary shell that is also a simple interpreter for C language
 
+## How to run
+
+- Create a `build` directory inside this repository.
+- Run `cmake ..` in the `build` directory.
+- Run `make`
+- `ecsh` is created, you can use it like this: `./ecsh`
+
 ---
 
 ## References
