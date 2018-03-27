@@ -6,15 +6,19 @@
  * */
 
 #include <assert.h>
-#include "../src/utils.h"
+#include "../src/utils.c"
 
-void test_line_split(){
-    char *input_command = "split this line";
-    char **arguments = split_line(input_command);
-    int n = sizeof(arguments) / sizeof(arguments[0]);
-    assert(n == 3);
+void test_line_split() {
+    char input_command[] = "split this line";
+    fputs(input_command, stdout);
+    char **arguments;
+    arguments = split_line(input_command);
+    int i;
+    for (i = 0; i < 3; i++) {
+        assert(strlen(arguments[i]));
+    }
 }
 
-//int main(){
-//    test_line_split();
-//}
+int main() {
+    test_line_split();
+}

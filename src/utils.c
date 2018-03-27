@@ -10,6 +10,26 @@
 #include <stdlib.h>
 #include "utils.h"
 
+//#define DEBUG
+
+/**
+ * Utility functions for Utilities..
+ * */
+int debug() {
+#ifdef DEBUG
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+void print_newline() {
+    fputs("\n", stdout);
+}
+
+/**
+ * Functions that will be used in the shell
+ * */
 void main_loop() {
     char *input_command;
     char **arguments;
@@ -17,7 +37,7 @@ void main_loop() {
 
     while (TRUE) {
         // display prompt
-        printf("ecsh> ");
+        printf(ANSI_COLOR_YELLOW "ecsh> " ANSI_COLOR_RESET);
 
         // read and execute commands that were input and
         // exit if the user enters `exit`
@@ -27,32 +47,64 @@ void main_loop() {
         }
 
         arguments = split_line(input_command);
+        int length = sizeof(arguments) / sizeof(arguments[0]);
+        if(debug()){
+            for (int i = 0; i < length; ++i) {
+                fputs(arguments[i], stdout);
+                print_newline();
+            }
+        }
         status = execute(arguments);
 
         // cleanup
         free(arguments);
         free(input_command);
-        // fputs(input_command, stdout);
     }
 }
 
 int execute(char **arguments) {
-    return 0;
+    int i;
+    if(arguments[0] == NULL){
+        // empty command entered
+        return 1;
+    }
+
+    // todo
+    // here we check if there is a builtin function for the first argument
 }
 
 char **split_line(char *input_command) {
     int position = 0;
     char *token = NULL;
-    char **tokens = malloc(TOKEN_BUFFER_SIZE * sizeof(char *));
     int buffer_size = TOKEN_BUFFER_SIZE;
+    char **tokens = malloc(buffer_size * sizeof(char *));
+
+    int debug_mode = debug();
+    if (debug_mode) {
+        fputs("Input command:\t", stdout);
+        fputs(input_command, stdout);
+        print_newline();
+    }
+
+    if (!tokens) {
+        printf("ecsh: token memory allocation error\n");
+        exit(EXIT_FAILURE);
+    }
 
     token = strtok(input_command, TOKEN_DELIMITERS);
+    if (debug_mode) {
+        fputs("Printing tokens:\n", stdout);
+    }
     while (token != NULL) {
         tokens[position] = token;
         position++;
+        if (debug_mode) {
+            fputs(token, stdout);
+            fputs("\n", stdout);
+        }
 
         // if buffer size is exceeded, update size
-        if (position == buffer_size) {
+        if (position >= buffer_size) {
             buffer_size += TOKEN_BUFFER_SIZE;
             tokens = realloc(tokens, buffer_size * sizeof(char *));
 
@@ -63,9 +115,16 @@ char **split_line(char *input_command) {
         }
 
         // move to next token
-        token = strtok(input_command, TOKEN_DELIMITERS);
+        token = strtok(NULL, TOKEN_DELIMITERS);
     }
     tokens[position] = NULL;
+    if(debug_mode){
+        char snum[3];
+        sprintf(snum, "%d\n", position);
+        fputs("Number of words in input: ", stdout);
+        fputs(snum, stdout);
+        print_newline();
+    }
     return tokens;
 }
 
