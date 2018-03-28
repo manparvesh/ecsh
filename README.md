@@ -1,4 +1,4 @@
-# ecsh
+# ecsh [![](https://travis-ci.com/manparvesh/ecsh.svg?token=PLTqe9xbTbHzLpzsUbc5&branch=master)](https://travis-ci.com/manparvesh/ecsh)
 Elementary shell that is also a simple interpreter for C language
 
 ## How to run
