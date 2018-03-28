@@ -4,8 +4,6 @@ project(ecsh)
 add_executable(ecsh
         src/main.c src/utils.c src/utils.h)
 
-set_property(TARGET ecsh PROPERTY C_STANDARD 99)
-
 enable_testing()
 
 # test that checks if the shell starts properly
@@ -21,3 +19,7 @@ add_executable(${UTIL_TEST_EXE_NAME}
         tests/utils_test.c)
 add_test(NAME "ecsh_util_tests"
         COMMAND ${UTIL_TEST_EXE_NAME})
+
+set_property(TARGET ecsh PROPERTY C_STANDARD 99)
+set_property(TARGET ecsh_main_test PROPERTY C_STANDARD 99)
+set_property(TARGET ecsh_util_tests PROPERTY C_STANDARD 99)
