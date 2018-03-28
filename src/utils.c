@@ -70,6 +70,7 @@ int ecsh_help(char **args) {
 }
 
 int ecsh_exit(char **args) {
+    printf(ANSI_COLOR_RED "Goodbye..\n" ANSI_COLOR_RESET);
     return EXIT_FAILURE;
 }
 
