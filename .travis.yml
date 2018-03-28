@@ -3,7 +3,7 @@ language: c
 compiler:
   - clang
   - gcc
-before_install:
-  - cmake . && make
 install:
+  - cmake . && make
+script:
    - make test
