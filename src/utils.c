@@ -8,7 +8,69 @@
 #include <stdio.h>
 #include <memory.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <wait.h>
 #include "utils.h"
+
+/*
+  Function Declarations for builtin shell commands:
+ */
+int ecsh_cd(char **args);
+
+int ecsh_help(char **args);
+
+int ecsh_exit(char **args);
+
+/*
+  List of builtin commands, followed by their corresponding functions.
+ */
+char *builtin_strings[] = {
+        "cd",
+        "help",
+        "exit"
+};
+
+int (*builtin_function[])(char **) = {
+        &ecsh_cd,
+        &ecsh_help,
+        &ecsh_exit
+};
+
+int ecsh_num_builtins() {
+    return sizeof(builtin_strings) / sizeof(char *);
+}
+
+/*
+  Builtin function implementations.
+*/
+int ecsh_cd(char **args) {
+    if (args[1] == NULL) {
+        fprintf(stderr, "ecsh: expected argument to \"cd\"\n");
+    } else {
+        if (chdir(args[1]) != 0) {
+            perror("ecsh");
+        }
+    }
+    return EXIT_SUCCESS;
+}
+
+int ecsh_help(char **args) {
+    int i;
+    printf("Man Parvesh Singh Randhawa's ecsh\n");
+    printf("Type program names and arguments, and hit enter.\n");
+    printf("The following commands are built in:\n");
+
+    for (i = 0; i < ecsh_num_builtins(); i++) {
+        printf("  %s\n", builtin_strings[i]);
+    }
+
+    printf("Use the man command for information on other programs.\n");
+    return EXIT_SUCCESS;
+}
+
+int ecsh_exit(char **args) {
+    return EXIT_FAILURE;
+}
 
 //#define DEBUG
 
@@ -33,22 +95,19 @@ void print_newline() {
 void main_loop() {
     char *input_command;
     char **arguments;
-    int status;
+    int status = 0;
 
-    while (TRUE) {
+    while (status == EXIT_SUCCESS) {
         // display prompt
         printf(ANSI_COLOR_YELLOW "ecsh> " ANSI_COLOR_RESET);
 
         // read and execute commands that were input and
         // exit if the user enters `exit`
         input_command = read_line();
-        if (strncmp(input_command, "exit", 4) == 0) {
-            break;
-        }
 
         arguments = split_line(input_command);
         int length = sizeof(arguments) / sizeof(arguments[0]);
-        if(debug()){
+        if (debug()) {
             for (int i = 0; i < length; ++i) {
                 fputs(arguments[i], stdout);
                 print_newline();
@@ -56,21 +115,56 @@ void main_loop() {
         }
         status = execute(arguments);
 
+        if (debug()) {
+            printf("Status code received: %d\n", status);
+        }
+
         // cleanup
         free(arguments);
         free(input_command);
     }
 }
 
-int execute(char **arguments) {
-    int i;
-    if(arguments[0] == NULL){
-        // empty command entered
-        return 1;
+int launch(char **arguments) {
+    pid_t pid, wpid;
+    int status;
+
+    pid = fork();
+    if (pid == 0) {
+        // child process
+        // execvp checks if the argument is present in the `PATH` env variable and tries to run it.
+        if (execvp(arguments[0], arguments) == -1) {
+            perror("ecsh");
+        }
+        exit(EXIT_SUCCESS);
+    } else if (pid < 0) {
+        // error in forking
+        perror("ecsh: error in forking");
+    } else {
+        // parent
+        do {
+            wpid = waitpid(pid, &status, WUNTRACED);
+        } while (!WIFEXITED(status) && !WIFSIGNALED(status));
     }
 
-    // todo
+    return EXIT_SUCCESS;
+}
+
+int execute(char **arguments) {
+    int i;
+    if (arguments[0] == NULL) {
+        // empty command entered
+        return EXIT_FAILURE;
+    }
+
     // here we check if there is a builtin function for the first argument
+    for (i = 0; i < ecsh_num_builtins(); i++) {
+        if (strcmp(arguments[0], builtin_strings[i]) == 0) {
+            return (*builtin_function[i])(arguments);
+        }
+    }
+
+    return launch(arguments);
 }
 
 char **split_line(char *input_command) {
@@ -118,7 +212,7 @@ char **split_line(char *input_command) {
         token = strtok(NULL, TOKEN_DELIMITERS);
     }
     tokens[position] = NULL;
-    if(debug_mode){
+    if (debug_mode) {
         char snum[3];
         sprintf(snum, "%d\n", position);
         fputs("Number of words in input: ", stdout);
