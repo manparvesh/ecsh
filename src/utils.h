@@ -22,6 +22,14 @@
 #define ANSI_COLOR_MAGENTA "\x1b[35m"
 #define ANSI_COLOR_CYAN    "\x1b[36m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
+#define ANSI_BOLD_BLACK   "\033[1m\033[30m"
+#define ANSI_BOLD_RED     "\033[1m\033[31m"
+#define ANSI_BOLD_GREEN   "\033[1m\033[32m"
+#define ANSI_BOLD_YELLOW  "\033[1m\033[33m"
+#define ANSI_BOLD_BLUE    "\033[1m\033[34m"
+#define ANSI_BOLD_MAGENTA "\033[1m\033[35m"
+#define ANSI_BOLD_CYAN    "\033[1m\033[36m"
+#define ANSI_BOLD_WHITE   "\033[1m\033[37m"
 
 void main_loop();
 

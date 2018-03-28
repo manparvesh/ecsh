@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <wait.h>
+#include <values.h>
 #include "utils.h"
 
 /*
@@ -99,7 +100,19 @@ void main_loop() {
 
     while (status == EXIT_SUCCESS) {
         // display prompt
-        printf(ANSI_COLOR_YELLOW "ecsh> " ANSI_COLOR_RESET);
+        char hostname[HOST_NAME_MAX];
+        char username[LOGIN_NAME_MAX];
+        gethostname(hostname, HOST_NAME_MAX);
+        getlogin_r(username, LOGIN_NAME_MAX);
+        printf(ANSI_BOLD_GREEN "%s@%s" ANSI_COLOR_RESET, username, hostname);
+
+        printf(":");
+
+        char cwd[1024];
+        if (getcwd(cwd, sizeof(cwd)) != NULL){
+            printf(ANSI_BOLD_BLUE "%s " ANSI_COLOR_RESET, cwd);
+        }
+        printf(ANSI_BOLD_YELLOW "ecsh> " ANSI_COLOR_RESET);
 
         // read and execute commands that were input and
         // exit if the user enters `exit`
