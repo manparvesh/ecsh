@@ -1,11 +1,20 @@
 # ecsh [![](https://travis-ci.com/manparvesh/ecsh.svg?token=PLTqe9xbTbHzLpzsUbc5&branch=master)](https://travis-ci.com/manparvesh/ecsh)
 Elementary shell that is also a simple interpreter for C language
 
+Things to note about this shell:
+- Commands must on a single line.
+- No piping or redirection
+- builtins:
+  - cd
+  - help
+  - exit
+
 ## How to run
 
 - Create a `build` directory inside this repository.
 - Run `cmake ..` in the `build` directory.
 - Run `make`
+- *[optional]* Run `make test` to run the tests.
 - `ecsh` is created, you can use it like this: `./ecsh`
 
 ---
