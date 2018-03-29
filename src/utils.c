@@ -71,7 +71,7 @@ int ecsh_help(char **args) {
 
 int ecsh_exit(char **args) {
     printf(ANSI_COLOR_RED "Goodbye..\n" ANSI_COLOR_RESET);
-    return EXIT_FAILURE;
+    return 13;
 }
 
 //#define DEBUG
@@ -99,7 +99,7 @@ void main_loop() {
     char **arguments;
     int status = 0;
 
-    while (status == EXIT_SUCCESS) {
+    while (status != 13) {
         // display prompt
         char hostname[HOST_NAME_MAX];
         char username[LOGIN_NAME_MAX];
@@ -110,10 +110,10 @@ void main_loop() {
         printf(":");
 
         char cwd[1024];
-        if (getcwd(cwd, sizeof(cwd)) != NULL){
+        if (getcwd(cwd, sizeof(cwd)) != NULL) {
             printf(ANSI_BOLD_BLUE "%s " ANSI_COLOR_RESET, cwd);
         }
-        printf(ANSI_BOLD_YELLOW "ecsh> " ANSI_COLOR_RESET);
+        printf(ANSI_BOLD_YELLOW "ecsh> %s  " ANSI_COLOR_RESET, status == 0 ? "OK" : "NG");
 
         // read and execute commands that were input and
         // exit if the user enters `exit`
