@@ -1,13 +1,14 @@
-# ecsh [![](https://travis-ci.com/manparvesh/ecsh.svg?token=PLTqe9xbTbHzLpzsUbc5&branch=master)](https://travis-ci.com/manparvesh/ecsh)
-Elementary shell that is also a simple interpreter for C language
+# ecsh [![Build status](https://travis-ci.com/manparvesh/ecsh.svg?token=PLTqe9xbTbHzLpzsUbc5&branch=master)](https://travis-ci.com/manparvesh/ecsh)
 
-Things to note about this shell:
-- Commands must on a single line.
-- No piping or redirection
-- builtins:
-  - cd
-  - help
-  - exit
+Elementary shell written in C
+
+![Demo](screencasts/demo1.gif)
+
+## Features
+
+- Can run all commands present in the `PATH` env variable.
+- Shows status of the command previously run as `OK` or `NG` (Not good).
+- Shows basic but necessary things like `username`, `PC name` and `current directory`.
 
 ## How to run
 
@@ -16,6 +17,28 @@ Things to note about this shell:
 - Run `make`
 - *[optional]* Run `make test` to run the tests.
 - `ecsh` is created, you can use it like this: `./ecsh`
+
+## Global installation
+
+- Create a `build` directory inside this repository.
+- Run `cmake ..` in the `build` directory.
+- Run `sudo make install`
+
+## Notes
+
+- Commands must on a single line.
+- No piping or redirection
+- builtins:
+  - cd
+  - help
+  - exit
+  - all things added in the `PATH` variable
+
+## TODO
+
+- Piping and redirection
+- Multi-line commands
+- Simple C interpreter
 
 ---
 
