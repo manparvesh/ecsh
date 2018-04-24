@@ -37,6 +37,8 @@ int (*builtin_function[])(char **) = {
         &ecsh_exit
 };
 
+int process_input(char *input_command);
+
 int ecsh_num_builtins() {
     return sizeof(builtin_strings) / sizeof(char *);
 }
@@ -96,14 +98,13 @@ void print_newline() {
  * */
 void main_loop() {
     char *input_command;
-    char **arguments;
     int status = 0;
 
     while (status != 13) {
         // display prompt
         char hostname[HOST_NAME_MAX];
         char username[LOGIN_NAME_MAX];
-        gethostname(hostname, HOST_NAME_MAX);
+            gethostname(hostname, HOST_NAME_MAX);
         getlogin_r(username, LOGIN_NAME_MAX);
         printf(ANSI_BOLD_GREEN "%s@%s" ANSI_COLOR_RESET, username, hostname);
 
@@ -119,6 +120,45 @@ void main_loop() {
         // exit if the user enters `exit`
         input_command = read_line();
 
+        status = process_input(input_command);
+
+        if (debug()) {
+            printf("Status code received: %d\n", status);
+        }
+
+        // cleanup
+        free(input_command);
+    }
+}
+
+// function for finding pipe
+int parse_pipe(char* str, char** strpiped)
+{
+    int i;
+    for (i = 0; i < 2; i++) {
+        strpiped[i] = strsep(&str, "|");
+        if (strpiped[i] == NULL)
+            break;
+    }
+
+    if (strpiped[1] == NULL)
+        return FALSE; // returns false if no pipe is found.
+    else {
+        return TRUE;
+    }
+}
+
+int process_input(char *input_command) {
+    char **arguments;
+    char* strpiped[2];
+    int piped = FALSE;
+
+    piped = parse_pipe(input_command, strpiped);
+
+    if (piped == TRUE) {
+        printf("Piping is added!\n");
+        // todo implement this part
+    } else {
         arguments = split_line(input_command);
         int length = sizeof(arguments) / sizeof(arguments[0]);
         if (debug()) {
@@ -127,15 +167,7 @@ void main_loop() {
                 print_newline();
             }
         }
-        status = execute(arguments);
-
-        if (debug()) {
-            printf("Status code received: %d\n", status);
-        }
-
-        // cleanup
-        free(arguments);
-        free(input_command);
+        return execute(arguments);
     }
 }
 
@@ -150,6 +182,7 @@ int launch(char **arguments) {
         if (execvp(arguments[0], arguments) == -1) {
             perror("ecsh");
         }
+        free(arguments);
         exit(EXIT_SUCCESS);
     } else if (pid < 0) {
         // error in forking
@@ -161,6 +194,7 @@ int launch(char **arguments) {
         } while (!WIFEXITED(status) && !WIFSIGNALED(status));
     }
 
+    free(arguments);
     return EXIT_SUCCESS;
 }
 

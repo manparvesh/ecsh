@@ -16,6 +16,8 @@ int main(int argc, char const *argv[]) {
     printf(  "\t|-------------------------------------------|\n");
     printf(  "\t|            Licensed under MIT             |\n");
     printf(  "\t|-------------------------------------------|\n");
+    printf(  "\t|              Use at own risk              |\n");
+    printf(  "\t|-------------------------------------------|\n");
     printf(  "\t|     Author: Man Parvesh Singh Randhawa    |\n");
     printf(  "\t+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-+\n");
     printf(  "\n\n");
