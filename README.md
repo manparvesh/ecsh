@@ -2,7 +2,7 @@
 
 Elementary shell written in C
 
-![Demo](screencasts/demo1.gif)
+![Demo](https://raw.githubusercontent.com/manparvesh/ecsh/master/screencasts/demo1.gif)
 
 ## Features
 
